@@ -6,9 +6,7 @@
  * @author Luis Alberto Lamadrid - A01191158
  * @version 1.00 2008/6/13
  */
- 
-import java.applet.Applet;
-import java.applet.AudioClip;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -17,8 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URL;
 import java.util.LinkedList;
+import javax.swing.JFrame;
 
-public class AppletExamen extends Applet implements Runnable, KeyListener {
+public class JFrameExamen extends JFrame implements Runnable, KeyListener {
 
     /* objetos para manejar el buffer del Applet y este no parpadee */
     private Image    imaImagenApplet;   // Imagen a proyectar en Applet	
@@ -32,8 +31,13 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
     private LinkedList lstCorredores;   // Lista de 10 a 15 corredores
     
     /* objetos de audio */
-    private AudioClip aucSonidoSuccess; // Objeto AudioClip sonido Caminador
-    private AudioClip aucSonidoFailure; // Objeto AudioClip sonido Corredor
+    private SoundClip aucSonidoSuccess; // Objeto AudioClip sonido Caminador
+    private SoundClip aucSonidoFailure; // Objeto AudioClip sonido Corredor
+    
+    public JFrameExamen(){
+        init();
+        start();
+    }
     	
     /** 
      * init
@@ -56,12 +60,10 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
         iAcumCorredores = 0;
         
 	//creo el sonido del caminador
-	URL urlSonidoSuccess = this.getClass().getResource("success.wav");
-        aucSonidoSuccess = getAudioClip (urlSonidoSuccess);
+        aucSonidoSuccess = new SoundClip ("success.wav");
         
 	//creo el sonido del corredor
-	URL urlSonidoFailure = this.getClass().getResource("failure.wav");
-        aucSonidoFailure = getAudioClip (urlSonidoFailure);
+        aucSonidoFailure = new SoundClip ("failure.wav");
         
         // cargo la imagen de Nena
 	URL urlImagenNena = this.getClass().getResource("nena.gif");
@@ -167,7 +169,7 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
      */
     public void run () {
         // se realiza el ciclo del juego en este caso nunca termina
-        while (true) {
+        while (iVidas > 0) {
             /* mientras dure el juego, se actualizan posiciones de jugadores
                se checa si hubo colisiones para desaparecer jugadores o corregir
                movimientos y se vuelve a pintar todo
@@ -193,11 +195,6 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
      * 
      */
     public void actualiza(){
-        
-        // si es GAME OVER regresa
-        if (iVidas == 0){
-            return;
-        }
         
         // mueve a la nena de direccion
         switch (iDireccion){
@@ -289,10 +286,6 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
      * 
      */
     public void checaColision(){
-        // si es GAME OVER regresa
-        if (iVidas == 0){
-            return;
-        }
         
         // checando que nena no se salga de la pantalla
         if (perNena.getX() < 0){
@@ -342,7 +335,7 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
     }
 	
     /**
-     * update
+     * paint
      * 
      * Metodo sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
@@ -351,7 +344,7 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
      * @param graGrafico es el <code>objeto grafico</code> usado para dibujar.
      * 
      */
-    public void update (Graphics graGrafico){
+    public void paint (Graphics graGrafico){
         // Inicializan el DoubleBuffer
         if (imaImagenApplet == null){
                 imaImagenApplet = createImage (this.getSize().width, 
@@ -372,7 +365,7 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
 
         // Actualiza el Foreground.
         graGraficaApplet.setColor (getForeground());
-        paint(graGraficaApplet);
+        paint_buffer(graGraficaApplet);
         
 
         // Dibuja la imagen actualizada
@@ -389,7 +382,7 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
      * @param g es el <code>objeto grafico</code> usado para dibujar.
      * 
      */
-    public void paint(Graphics g) {
+    public void paint_buffer(Graphics g) {
         
         // le pone color a todos los textos
         g.setColor(Color.red);
@@ -429,8 +422,8 @@ public class AppletExamen extends Applet implements Runnable, KeyListener {
         }
         
         // dibuja el score y las vidas
-        g.drawString("Vidas: " + String.valueOf(iVidas), 10, 20);
-        g.drawString("Score: " + String.valueOf(iScore), 10, 40);
+        g.drawString("Vidas: " + String.valueOf(iVidas), 10, 40);
+        g.drawString("Score: " + String.valueOf(iScore), 10, 60);
     }
 
     @Override
