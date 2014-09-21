@@ -3,7 +3,8 @@
  *
  * Personaje para juego previo Examen
  *
- * @author Luis Alberto Lamadrid - A01191158
+ * @author Luis Alberto Lamadrid - A01191158  
+ * @author Jeronimo Martinez - A01191487
  * @version 1.00 2008/6/13
  */
 

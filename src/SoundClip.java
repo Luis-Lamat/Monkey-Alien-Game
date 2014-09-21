@@ -5,11 +5,6 @@
  */
 
 /**
- *
- * @author Luis Lamadrid
- */
-
-/**
  * Clase SoundClip
  *
  */
