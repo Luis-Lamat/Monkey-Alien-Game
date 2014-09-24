@@ -30,6 +30,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
     private Personaje perNena;          // Objeto Nena de la clase personaje
     private LinkedList lstCaminadores;  // Lista de 8 a 10 caminadores
     private LinkedList lstCorredores;   // Lista de 10 a 15 corredores
+    private boolean bPausado;           // Pausa
     
     /* objetos de audio */
     private SoundClip aucSonidoSuccess; // Objeto AudioClip sonido Caminador
@@ -38,6 +39,8 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
     public JFrameExamen(){
         init();
         start();
+        
+        
     }
     	
     /** 
@@ -59,6 +62,9 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         
         // inicializa el acumulado en cero
         iAcumCorredores = 0;
+        
+        //Inicializa Pausa
+        bPausado = false;
         
 	//creo el sonido del caminador
         aucSonidoSuccess = new SoundClip ("success.wav");
@@ -175,8 +181,10 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
                se checa si hubo colisiones para desaparecer jugadores o corregir
                movimientos y se vuelve a pintar todo
             */ 
-            actualiza();
-            checaColision();
+            if(!bPausado) {
+                actualiza();
+                checaColision();
+            }
             repaint();
             try	{
                 // El thread se duerme.
@@ -298,25 +306,25 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         if (perNena.getY() < 0){
             perNena.setY(0);
         }
-        else if ((perNena.getY() + perNena.getAlto()) > getHeight()){
+        else if ((perNena.getY() + perNena.getAlto()) > getHeight()) {
             perNena.setY(getHeight() - perNena.getAlto());
         }
         
         // Checa colision de caminadores con la nena
-        for (Object lstCaminador : lstCaminadores){
+        for (Object lstCaminador : lstCaminadores) {
             Personaje perCaminador = (Personaje) lstCaminador;
-            if (perCaminador.colisiona(perNena)){
+            if (perCaminador.colisiona(perNena)) {
                 iScore += 1;
                 aucSonidoSuccess.play();
                 reposicionaCaminador(perCaminador);
             }
-            if (perCaminador.getX() > (getWidth() - perCaminador.getAncho())){
+            if (perCaminador.getX() > (getWidth() - perCaminador.getAncho())) {
                 reposicionaCaminador(perCaminador);
             }
         }
         
         // Checa colision de corredores con la nena
-        for (Object lstCorredor : lstCorredores){
+        for (Object lstCorredor : lstCorredores) {
             Personaje perCorredor = (Personaje) lstCorredor;
             if (perCorredor.colisiona(perNena)){
                 reposicionaCorredor(perCorredor);
@@ -324,12 +332,12 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
                 iAcumCorredores++;
                 
                 // checa el acumulado de corredores para ver s ya son 5
-                if (iAcumCorredores == 5){
+                if (iAcumCorredores == 5) {
                     iAcumCorredores = 0;
                     iVidas -= 1; // decrementa las vidas
                 }
             }
-            if (perCorredor.getY() > (getHeight() - perCorredor.getAlto())){
+            if (perCorredor.getY() > (getHeight() - perCorredor.getAlto())) {
                 reposicionaCorredor(perCorredor);
             }
         }
@@ -345,7 +353,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
      * @param graGrafico es el <code>objeto grafico</code> usado para dibujar.
      * 
      */
-    public void paint (Graphics graGrafico){
+    public void paint (Graphics graGrafico) {
         // Inicializan el DoubleBuffer
         if (imaImagenApplet == null){
                 imaImagenApplet = createImage (this.getSize().width, 
@@ -405,13 +413,13 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
                 g.drawImage(perNena.getImagen(), perNena.getX(),
                         perNena.getY(), this);
                 // dibuja a los caminadores
-                for (Object lstCaminador : lstCaminadores){
+                for (Object lstCaminador : lstCaminadores) {
                     Personaje perCaminador = (Personaje) lstCaminador;
                      g.drawImage(perCaminador.getImagen(), perCaminador.getX(),
                         perCaminador.getY(), this);
                 }
                 // dibuja a los corredores
-                for (Object lstCorredor : lstCorredores){
+                for (Object lstCorredor : lstCorredores) {
                     Personaje perCorredor = (Personaje) lstCorredor;
                      g.drawImage(perCorredor.getImagen(), perCorredor.getX(),
                         perCorredor.getY(), this);
@@ -437,11 +445,11 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         // si presiono W  (arriba)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_W){
+        if(keyEvent.getKeyCode() == KeyEvent.VK_W) {
             iDireccion = 1;
         }   
         // si presiono S  (abajo)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_S){
+        if(keyEvent.getKeyCode() == KeyEvent.VK_S) {
             iDireccion = 2;
 
         } 
@@ -453,5 +461,10 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         if(keyEvent.getKeyCode() == KeyEvent.VK_D) { 
             iDireccion = 4;
         }
+        //si presiono P (Pausar)
+        if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
+            bPausado = !bPausado;
+        }
+        
     }
 }
