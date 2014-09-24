@@ -14,8 +14,13 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 public class JFrameExamen extends JFrame implements Runnable, KeyListener {
@@ -39,8 +44,6 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
     public JFrameExamen(){
         init();
         start();
-        
-        
     }
     	
     /** 
@@ -465,6 +468,44 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
             bPausado = !bPausado;
         }
+        if(keyEvent.getKeyCode() == KeyEvent.VK_G) { 
+            try {
+                grabaArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(JFrameExamen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
     }
-}
+    public void grabaArchivo() throws IOException{
+        // creo el objeto de salida para grabar en un archivo de texto
+        PrintWriter prwSalida = new PrintWriter
+                                (new FileWriter("save_file.txt"));
+        // guardo en  linea 1 el score
+    	prwSalida.println("Vidas: " + iVidas);
+        // guardo en  linea Score
+        prwSalida.println("Score: " + iScore);
+        prwSalida.println("posNena " + perNena.getX() + " " + 
+                                perNena.getY() + " " + iDireccion);
+        int iCount = 1;
+        prwSalida.println("numCaminadores: " + lstCaminadores.size());
+        for (Object lstCaminador : lstCaminadores) {
+            Personaje perCaminador = (Personaje) lstCaminador;
+            prwSalida.println(iCount + "): " + perCaminador.getX() + " " + 
+                                perCaminador.getY());
+            iCount++;
+        }
+        iCount = 1;
+        prwSalida.println("numCaminadores: " + lstCorredores.size());
+        for (Object lstCorredor : lstCorredores) {
+                    Personaje perCorredor = (Personaje) lstCorredor;
+                    prwSalida.println(iCount + "): " + perCorredor.getX() 
+                                + " " + perCorredor.getY());
+            iCount++;
+        }
+        prwSalida.println("END");
+        // cierro el archivo
+    	prwSalida.close();
+        }
+        	
+    }
