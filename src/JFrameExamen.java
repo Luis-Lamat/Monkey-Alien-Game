@@ -495,9 +495,11 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         PrintWriter prwSalida = new PrintWriter
                                 (new FileWriter("save_file.txt"));
         // guardo en  linea 1 el score
-    	prwSalida.println("Vidas: " + iVidas);
+    	prwSalida.println("Vidas: ");
+        prwSalida.println(iVidas);
         // guardo en  linea Score
-        prwSalida.println("Score: " + iScore);
+        prwSalida.println("Score: ");
+        prwSalida.println(iScore);
         prwSalida.println("posNena: ");
         prwSalida.println(perNena.getX());
         prwSalida.println(perNena.getY());
@@ -553,7 +555,7 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         brwEntrada.readLine(); // lee el string de titulo para no procesarlo
         perNena.setX(Integer.parseInt(brwEntrada.readLine()));    
         perNena.setY(Integer.parseInt(brwEntrada.readLine()));
-        iDireccion = Integer.parseInt(brwEntrada.readLine());;
+        iDireccion = Integer.parseInt(brwEntrada.readLine());
         
         // Se actualiza la posicion de los caminadores
         brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
