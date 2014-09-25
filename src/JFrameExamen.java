@@ -14,6 +14,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -468,9 +472,18 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
         if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
             bPausado = !bPausado;
         }
+        // si presiona G (save_file)
         if(keyEvent.getKeyCode() == KeyEvent.VK_G) { 
             try {
                 grabaArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(JFrameExamen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        // si presiona G (save_file)
+        if(keyEvent.getKeyCode() == KeyEvent.VK_C) { 
+            try {
+                leeArchivo();
             } catch (IOException ex) {
                 Logger.getLogger(JFrameExamen.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -485,27 +498,82 @@ public class JFrameExamen extends JFrame implements Runnable, KeyListener {
     	prwSalida.println("Vidas: " + iVidas);
         // guardo en  linea Score
         prwSalida.println("Score: " + iScore);
-        prwSalida.println("posNena " + perNena.getX() + " " + 
-                                perNena.getY() + " " + iDireccion);
+        prwSalida.println("posNena: ");
+        prwSalida.println(perNena.getX());
+        prwSalida.println(perNena.getY());
+        prwSalida.println(iDireccion);
+        
         int iCount = 1;
-        prwSalida.println("numCaminadores: " + lstCaminadores.size());
+        prwSalida.println("Caminadores:");
         for (Object lstCaminador : lstCaminadores) {
             Personaje perCaminador = (Personaje) lstCaminador;
-            prwSalida.println(iCount + "): " + perCaminador.getX() + " " + 
-                                perCaminador.getY());
+            prwSalida.println(iCount + ")---------------------------");
+            prwSalida.println(perCaminador.getX());
+            prwSalida.println(perCaminador.getY());
             iCount++;
         }
         iCount = 1;
-        prwSalida.println("numCaminadores: " + lstCorredores.size());
+        prwSalida.println("Corredores:");
         for (Object lstCorredor : lstCorredores) {
                     Personaje perCorredor = (Personaje) lstCorredor;
-                    prwSalida.println(iCount + "): " + perCorredor.getX() 
-                                + " " + perCorredor.getY());
+                    prwSalida.println(iCount + ")---------------------------");
+            prwSalida.println(perCorredor.getX());
+            prwSalida.println(perCorredor.getY());
             iCount++;
         }
         prwSalida.println("END");
         // cierro el archivo
     	prwSalida.close();
-        }
-        	
     }
+
+    public void leeArchivo() throws IOException{
+        
+        BufferedReader brwEntrada;
+        
+    	try{
+            // creo el objeto de entrada a partir de un archivo de texto
+            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
+    	} catch (FileNotFoundException e){
+            // si marca error grabo las posiciones actuales
+            grabaArchivo();
+            // lo vuelvo a abrir porque el objetivo es leer datos
+            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
+    	}
+        
+        // con el archivo abierto leo los datos que estan guardados
+        // primero saco el score que esta en la linea 1
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+    	iVidas = Integer.parseInt(brwEntrada.readLine());
+        
+        // despues las vidas
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+    	iScore = Integer.parseInt(brwEntrada.readLine());
+        
+        // Lee las posiciones y direccion que tenia Nena
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+        perNena.setX(Integer.parseInt(brwEntrada.readLine()));    
+        perNena.setY(Integer.parseInt(brwEntrada.readLine()));
+        iDireccion = Integer.parseInt(brwEntrada.readLine());;
+        
+        // Se actualiza la posicion de los caminadores
+        brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
+        for (Object lstCaminador : lstCaminadores){
+            brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+            Personaje perCaminador = (Personaje) lstCaminador;
+            perCaminador.setX(Integer.parseInt(brwEntrada.readLine()));
+            perCaminador.setY(Integer.parseInt(brwEntrada.readLine()));
+        }
+        
+        // Se actualiza la posicion de los corredores
+        brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
+        for (Object lstCorredor : lstCorredores){
+            brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+            Personaje perCorredor = (Personaje) lstCorredor;
+            perCorredor.setX(Integer.parseInt(brwEntrada.readLine()));
+            perCorredor.setY(Integer.parseInt(brwEntrada.readLine()));
+        }
+        
+        brwEntrada.readLine(); // lee el string END
+    	brwEntrada.close();
+    }
+}
